@@ -5,6 +5,8 @@ import java.util.Random;
 
 public class Wolf extends Creature implements Movable, Aggressor, Aware {
     Random _rand;
+    private Direction direction;
+    private Boolean canSpawn;
 
     /**
      * Creates an Wolf with 1 health point.
@@ -12,6 +14,7 @@ public class Wolf extends Creature implements Movable, Aggressor, Aware {
     public Wolf() {
         _rand = new Random();
         _health = 1;
+        canSpawn = false;
     }
 
     // No javadocs are necessary for these methods because they will inherit the
@@ -37,17 +40,14 @@ public class Wolf extends Creature implements Movable, Aggressor, Aware {
     public void attack(Creature target) {
         // Animals only eat plants. Give the plant 1 damage
         // and increase our health by one.
-        if(target instanceof Plant) {
+        if(target instanceof Hunter) {
             target.takeDamage(1);
             _health++;
         } else if (target instanceof Animal) {
             target.takeDamage(2);
             _health += 2;
         }
-        else if (target instanceof Wolf) {
-            target.takeDamage(4);
-            _health += 3;
-        }
+        canSpawn = true;
     }
 
     /**
@@ -76,6 +76,68 @@ public class Wolf extends Creature implements Movable, Aggressor, Aware {
 
     @Override
     public void senseNeighbors(Creature above, Creature below, Creature left, Creature right) {
-
+        if (direction == Direction.Up) {
+            if (above instanceof Animal) {
+                direction = Direction.Up;
+            }
+            else if (right instanceof Animal) {
+                direction = Direction.Right;
+            }
+            else if (below instanceof Animal) {
+                direction = Direction.Down;
+            }
+            direction = Direction.Left;
+        }
+        else if (direction == Direction.Right) {
+            if (right instanceof Animal) {
+                direction = Direction.Right;
+            }
+            else if (below instanceof Animal) {
+                direction = Direction.Down;
+            }
+            else if (left instanceof Animal) {
+                direction = Direction.Left;
+            }
+            else if (above instanceof Animal) {
+                direction = Direction.Up;
+            }
+        }
+        else if (direction == Direction.Down) {
+            if (below instanceof Animal) {
+                direction = Direction.Down;
+            }
+            else if (left instanceof Animal) {
+                direction = Direction.Left;
+            }
+            else if (above instanceof Animal) {
+                direction = Direction.Up;
+            }
+            else if (right instanceof Animal) {
+                direction = Direction.Right;
+            }
+        }
+        else if (direction == Direction.Left) {
+            if (left instanceof Animal) {
+                direction = Direction.Left;
+            }
+            else if (above instanceof Animal) {
+                direction = Direction.Up;
+            }
+            else if (right instanceof Animal) {
+                direction = Direction.Right;
+            }
+            else if (below instanceof Animal) {
+                direction = Direction.Down;
+            }
+        }
+    }
+    public Creature spawnNewCreature() {
+        if (canSpawn) {
+            canSpawn = false;
+            Wolf spawn = new Wolf();
+            spawn.setLocation(new Point(_location.x - 1, _location.y));
+            return spawn;
+        }
+        return null;
     }
 }

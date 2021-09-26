@@ -47,6 +47,11 @@ public class Game {
 			Wolf w = new Wolf();
 			creatures.add(w);
 		}
+		// Add some hunter to the world
+		for(int i = 0; i < 20; i++) {
+			Hunter h = new Hunter();
+			creatures.add(h);
+		}
 
 		// Create the world
 		_theWorld = new World(creatures);
